@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ARES-WALK — Suited Traverse Planner · Altadena Boxwork</title>
+  <meta name="description" content="ARES-WALK is a suit-calibrated Mars EVA traverse planner for the Altadena boxwork unit, Gale Crater. HiRISE, THEMIS, CRISM and Curiosity ground truth fused into one flight-rule-safe traverse.">
+  <meta name="theme-color" content="#05080d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%2305080d'/%3E%3Ccircle cx='16' cy='16' r='12' fill='none' stroke='%23ffb45e' stroke-width='1.5'/%3E%3Cpath d='M10 22l6-13 6 13M12.3 18h7.4' fill='none' stroke='%23ffb45e' stroke-width='1.7'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/panels.css">
+  <link rel="stylesheet" href="css/map.css">
+</head>
+<body>
+  <a class="skip-link" href="#traverseMap">Skip to traverse map</a>
+
+  <svg class="svg-defs" aria-hidden="true" focusable="false">
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9.7 9.2a2.4 2.4 0 0 1 4.7.6c0 1.6-2.4 1.9-2.4 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="16.8" r="1" fill="currentColor"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 10.7v5.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="7.9" r="1" fill="currentColor"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.6l9 16H3l9-16z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9v4.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="16.6" r="1" fill="currentColor"/></symbol>
+    <symbol id="i-radiation" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2" fill="currentColor"/><path d="M12 2.8a9.2 9.2 0 0 1 4.6 1.2L12 12 7.4 4a9.2 9.2 0 0 1 4.6-1.2zM21.2 17a9.2 9.2 0 0 1-4.6 4.2V12l9.2-.1a9.2 9.2 0 0 1-4.6 5.1zM2.8 17A9.2 9.2 0 0 1 2.8 7L8 14.8 2.8 17z" fill="currentColor"/></symbol>
+    <symbol id="i-signal" viewBox="0 0 24 24"><path d="M5 18v-3M9.7 18v-6M14.3 18V8M19 18V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-thermo" viewBox="0 0 24 24"><path d="M10 13.5V5.8a2 2 0 1 1 4 0v7.7a4.2 4.2 0 1 1-4 0z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 11v7.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-mineral" viewBox="0 0 24 24"><path d="M12 2.8l8.4 6.1-3.2 12.3H6.8L3.6 8.9 12 2.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M3.8 9h16.4M12 2.9l-3 18.2M12 2.9l3 18.2" fill="none" stroke="currentColor" stroke-width="1" opacity=".7"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 12.5l9 5 9-5M3 16.8l9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" opacity=".65"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v3.2M12 18.8V22M2 12h3.2M18.8 12H22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="i-zoom-in" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10.5 7.4v6.2M7.4 10.5h6.2M15.4 15.4L21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-zoom-out" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7.4 10.5h6.2M15.4 15.4L21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="5" cy="18" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="19" cy="6" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.8 16.5c3.6-3.6 8-3.4 10.4-8.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-bootprint" viewBox="0 0 24 24"><path d="M8.6 4.2c1.7-.7 3 .4 3.3 2.1l.9 4.7c.2 1.1-.2 1.8-1 2.3l-2.4 1.4c-1.4.8-2.8.1-3.2-1.3L5 7.8c-.5-1.7.5-3.1 2.1-3.6l1.5-.4zM11 16.2c1.1-.2 1.9.4 2.1 1.4l.3 1.5c.2 1-.4 1.8-1.4 2l-2.5.5c-1 .2-1.8-.5-1.9-1.5l-.1-1.3c0-1.1.7-2 1.8-2.3l1.7-.3z" fill="currentColor"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><span>A</span><i></i></div>
+        <div class="brand-text">
+          <div class="brand-name">ARES<span>-</span>WALK</div>
+          <div class="brand-sub">SUITED TRAVERSE PLANNER <b>/</b> MSSS-ALTADENA</div>
+        </div>
+      </div>
+
+      <div class="topbar-telemetry" aria-label="Live mission telemetry">
+        <div class="telemetry"><span>MET</span><strong id="metClock">04:12:37</strong></div>
+        <div class="telemetry"><span>UHF LINK</span><strong class="ok" id="uhfStatus"><i></i> NOMINAL</strong></div>
+        <div class="telemetry"><span>CREW / PLSS</span><strong>02 / 1,600 Wh</strong></div>
+        <div class="telemetry"><span>SOL</span><strong>4611</strong></div>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="sensor-state" id="sensorState"><i></i><span>FUSION LOCKED</span></div>
+        <button class="brief-btn" id="briefBtn" type="button" aria-haspopup="dialog">
+          <span class="brief-q">?</span> MISSION BRIEF
+        </button>
+      </div>
+    </header>
+
+    <div class="spe-banner" id="speBanner" role="alert" hidden>
+      <div class="spe-banner-left"><svg><use href="#i-radiation"/></svg><strong>SOLAR PARTICLE EVENT DETECTED</strong><span>RAD WATCHDOG · MINIMUM-TIME ABORT ENGAGED</span></div>
+      <div class="spe-banner-right">DOSE <b id="speDose">0.84 mSv</b><span class="spe-sep"></span>SHELTER ETA <b id="speEta">18 MIN</b></div>
+    </div>
+
+    <main class="workspace">
+      <aside class="panel sensors-panel" aria-label="Orbital sensor stack and map overlays">
+        <div class="panel-head">
+          <div><span class="eyebrow">ORBITAL SENSOR STACK</span><small>ALTADENA BOXWORK · AEOLIS MONS</small></div>
+          <span class="head-chip">3 FUSED</span>
+        </div>
+
+        <div class="panel-scroll sensors-scroll">
+          <div class="fusion-line" aria-hidden="true">
+            <span>HIRISE</span><i></i><span>THEMIS</span><i></i><span>CRISM</span><i></i><span>MSL</span>
+          </div>
+          <div class="layer-list" id="layerList"></div>
+
+          <div class="section-label"><span>FLIGHT-RULE OVERLAYS</span><i></i></div>
+          <div class="overlay-list" id="overlayList"></div>
+
+          <div class="data-note">
+            <svg><use href="#i-layers"/></svg>
+            <div>
+              <span>DATA FUSION</span>
+              <strong>PDS · co-registered local grid</strong>
+              <small>HiRISE DTM 1 m · THEMIS 100 m · CRISM 18 m</small>
+            </div>
+            <b id="fusionPulse">LIVE</b>
+          </div>
+        </div>
+      </aside>
+
+      <section class="map-stage" aria-label="ARES-WALK orbital traverse map">
+        <div class="map-toolbar">
+          <div class="map-crumb">
+            <span>GALE CRATER</span><i>/</i><span>AEOLIS MONS</span><i>/</i><strong>ALTADENA</strong>
+            <em>ORTHO MOSAIC</em>
+          </div>
+          <div class="map-readout" id="mapReadout">
+            <span>4.75012°S</span><span>137.39982°E</span><span id="cursorElev">+0.0 m</span>
+          </div>
+          <div class="zoom-cluster" role="group" aria-label="Map zoom controls">
+            <button type="button" id="zoomIn" aria-label="Zoom in"><svg><use href="#i-zoom-in"/></svg></button>
+            <button type="button" id="zoomOut" aria-label="Zoom out"><svg><use href="#i-zoom-out"/></svg></button>
+            <button type="button" id="fitView" aria-label="Fit whole traverse"><svg><use href="#i-fit"/></svg></button>
+          </div>
+        </div>
+
+        <div class="mode-chip" id="modeChip">
+          <svg><use href="#i-route"/></svg>
+          <div><span>ROUTING MODE</span><strong>MIN-METABOLIC</strong></div>
+          <em id="modeDistance">1.84 km</em>
+        </div>
+
+        <canvas id="traverseMap" tabindex="0" aria-label="Interactive terrain map of the Altadena boxwork unit. Drag to pan, scroll to zoom, click a science waypoint for its briefing.">Interactive Mars traverse map for the Altadena boxwork unit.</canvas>
+        <div class="map-atmosphere" aria-hidden="true"></div>
+
+        <div class="map-loading" id="mapLoading" role="status" aria-live="polite">
+          <div class="loading-reticle" aria-hidden="true"><i></i><b></b><span></span></div>
+          <span class="loading-kicker">ORBITAL FUSION / ALTADENA</span>
+          <strong id="mapLoadingTitle">CO-REGISTERING HIRISE BASEMAP</strong>
+          <div class="loading-track" aria-hidden="true"><i></i></div>
+          <small>TPI · THEMIS · CRISM · FLIGHT-RULE MASKS</small>
+        </div>
+
+        <div class="visor-hud" id="visorHud" role="button" tabindex="0" aria-label="Astronaut visor HUD. Open selected waypoint briefing.">
+          <div class="hud-head"><span><i></i> VISOR HUD / EVA-02</span><em>OPTICS 1.0×</em></div>
+          <div class="hud-title" id="hudTitle">NO TARGET LOCKED</div>
+          <div class="hud-sub" id="hudSub">Click a science waypoint to pull its geological briefing.</div>
+          <div class="hud-grid" id="hudGrid">
+            <div><span>CREW</span><strong>02</strong></div>
+            <div><span>SUIT g</span><strong>0.38</strong></div>
+            <div><span>PLSS CAP</span><strong>75%</strong></div>
+          </div>
+          <div class="hud-corner tl"></div><div class="hud-corner tr"></div><div class="hud-corner bl"></div><div class="hud-corner br"></div>
+        </div>
+
+        <div class="legend" id="mapLegend">
+          <div class="legend-head"><span>MAP KEY</span><em>ALTADENA UNIT</em></div>
+          <ul id="legendList"></ul>
+          <div class="thermal-scale" id="thermalScale" hidden>
+            <span>THEMIS SI</span><div class="thermal-bar"></div><em>150 → 450</em>
+          </div>
+          <div class="legend-credit">HIRISE PIA26306 · NASA/JPL-CALTECH/UA</div>
+        </div>
+
+        <div class="map-scale">
+          <div class="north"><span>N</span><i></i></div>
+          <div class="scale-block"><div class="scale-line" id="scaleLine"></div><span id="scaleLabel">250 m</span></div>
+        </div>
+
+        <div class="map-hint" id="mapHint">DRAG TO PAN <i>·</i> SCROLL TO ZOOM <i>·</i> CLICK A WAYPOINT</div>
+      </section>
+
+      <aside class="panel audit-panel" aria-label="Traverse audit and flight rules">
+        <div class="panel-tabs" role="tablist" aria-label="Audit views">
+          <button type="button" role="tab" id="tabAudit" aria-selected="true" aria-controls="auditView" data-tab="audit" class="is-active">TRAVERSE AUDIT</button>
+          <button type="button" role="tab" id="tabRules" aria-selected="false" aria-controls="rulesView" data-tab="rules">FLIGHT RULES</button>
+        </div>
+
+        <div class="panel-scroll audit-scroll" id="auditView" role="tabpanel" aria-labelledby="tabAudit">
+          <div class="audit-status" id="auditStatus">
+            <span class="status-dot"></span>
+            <strong>WITHIN PLSS ENVELOPE</strong>
+            <em>4 TARGETS <i>·</i> 1 DEFERRED</em>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat"><span>ROUTE LENGTH</span><strong id="statDistance">1.84<small>km</small></strong><em>ridge-crest loop</em></div>
+            <div class="stat"><span>NET ASCENT</span><strong id="statAscent">+14.8<small>m</small></strong><em>high point W3</em></div>
+            <div class="stat"><span>SUITED TIME</span><strong id="statTime">2:48<small>h:m</small></strong><em>asymmetric 0.38 g</em></div>
+            <div class="stat"><span>ENERGY USE</span><strong id="statEnergy">1,048<small>Wh</small></strong><em>1,200 Wh cap</em></div>
+          </div>
+
+          <div class="energy-block">
+            <div class="energy-head"><span>PLSS ENERGY LEDGER</span><strong><b id="energyUsed">1,048</b> / 1,200 Wh</strong></div>
+            <div class="energy-track" id="energyTrack" role="img" aria-label="Energy use 1,048 of 1,200 watt-hours. 552 watt-hours walkback reserve.">
+              <div class="energy-reserve-zone"></div>
+              <div class="energy-out" id="energyOut"></div>
+              <div class="energy-return" id="energyReturn"></div>
+              <div class="energy-cap"><span>75% CAP</span></div>
+            </div>
+            <div class="energy-legend">
+              <span class="e-out"><i></i>OUT <b id="energyOutVal">716</b> Wh</span>
+              <span class="e-ret"><i></i>RETURN <b id="energyRetVal">332</b> Wh</span>
+              <span class="e-res"><i></i>RESERVE <b id="energyResVal">552</b> Wh</span>
+            </div>
+            <p class="energy-note" id="energyNote"><svg><use href="#i-info"/></svg> Walkback reserve 552 Wh · exceeds the mandatory 400 Wh (25%) floor.</p>
+          </div>
+
+          <div class="section-label"><span>SCIENCE WAYPOINTS</span><i></i><em>ETA / STATUS</em></div>
+          <ol class="wp-list" id="wpList"></ol>
+
+          <div class="audit-note"><svg><use href="#i-info"/></svg><span>Every station is re-checked against the 1,200 Wh walkback cap and the 22° suited stability ceiling at each metre.</span></div>
+
+          <div class="audit-actions">
+            <button type="button" class="danger-btn" data-spe-trigger><svg><use href="#i-radiation"/></svg><span><b>TRIGGER SPE SOLAR FLARE</b><small>Simulate RAD detection · minimum-time abort</small></span></button>
+            <button type="button" class="text-btn" data-goto-rules>OPEN FLIGHT-RULE EXPLAINERS <svg><use href="#i-arrow"/></svg></button>
+          </div>
+        </div>
+
+        <div class="panel-scroll audit-scroll" id="rulesView" role="tabpanel" aria-labelledby="tabRules" hidden>
+          <div class="rules-intro">
+            <span class="eyebrow">SUIT PHYSICS &amp; FLIGHT RULES</span>
+            <p>Hard constraints evaluated at every metre of the traverse — not post-hoc warnings.</p>
+          </div>
+          <div class="spe-panel" id="spePanel">
+            <div class="spe-panel-head"><svg><use href="#i-radiation"/></svg><span>SOLAR PARTICLE EVENT WATCHDOG</span><b id="spePanelState">ARMED</b></div>
+            <p>RAD is monitoring the local radiation environment. A triggered event switches pathfinding from minimum metabolic energy to minimum traversal time.</p>
+            <button type="button" class="danger-btn compact" data-spe-trigger><svg><use href="#i-radiation"/></svg><span><b>TRIGGER SPE SOLAR FLARE</b><small>Instant abort re-route</small></span></button>
+          </div>
+          <div class="rules-list" id="rulesList"></div>
+        </div>
+
+        <div class="panel-scroll audit-scroll waypoint-view" id="waypointView" role="region" aria-live="polite" hidden></div>
+      </aside>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-sources">
+        <span>NASA OPEN DATA &amp; MISSION SOURCES</span>
+        <p>Terrain, thermophysical, spectral, and rover localization inputs derived from NASA Planetary Data System (PDS) archives: MRO HiRISE Stereo DTM (<code>DTEEC_*</code>), Mars Odyssey THEMIS Nighttime IR, MRO CRISM <code>MTRDR</code>, and MSL <i>Curiosity</i> Traverse &amp; Mastcam Telemetry (NASA/JPL-Caltech/Univ. of Arizona/ASU/MSSS).</p>
+      </div>
+      <div class="footer-disclosure">
+        <span>TRANSPARENCY DISCLOSURE</span>
+        <p>Developed for the 2026 NASA Space Apps Challenge. Core physics architecture and mission concept by the team; software implementation and synthetic terrain calibration assisted by AI coding tools.</p>
+      </div>
+    </footer>
+  </div>
+
+  <div class="modal-layer" id="briefModal" hidden>
+    <div class="modal-backdrop" data-close-brief></div>
+    <div class="brief-modal" role="dialog" aria-modal="true" aria-labelledby="briefTitle" aria-describedby="briefDesc">
+      <div class="brief-head">
+        <div class="brief-head-left">
+          <span class="brief-kicker"><i></i> EVA-02 / PRE-SUIT BRIEFING</span>
+          <h1 id="briefTitle">MISSION <span>BRIEF</span></h1>
+        </div>
+        <div class="brief-head-right">
+          <div class="brief-patch" aria-hidden="true"><span>A</span></div>
+          <button type="button" class="icon-btn" id="briefClose" aria-label="Close mission brief"><svg><use href="#i-close"/></svg></button>
+        </div>
+      </div>
+
+      <div class="brief-body" id="briefBody">
+        <p class="brief-lede" id="briefDesc">Four hours. Two astronauts. A four-kilometre walkback problem hiding inside one of the most mineralogically rich outcrops on Mars.</p>
+        <div class="brief-meta-grid">
+          <div class="brief-meta">
+            <span>OPERATIONAL AREA</span>
+            <strong>Altadena Boxwork Unit</strong>
+            <p>Lower Mount Sharp (Aeolis Mons), Gale Crater <em>(4.75°S, 137.4°E)</em></p>
+          </div>
+          <div class="brief-meta">
+            <span>MISSION PROFILE</span>
+            <strong>4-Hour Dual-Astronaut Surface EVA</strong>
+            <p>Pressurized Rover Base Anchor</p>
+          </div>
+        </div>
+
+        <section class="brief-section">
+          <div class="brief-section-head"><span>01</span><h2>WHY THIS SITE MATTERS</h2></div>
+          <p>Web-scale Mars atlases show regional geology, but boots-on-the-ground explorers need hyperlocalized trafficability and life-support physics. In the Altadena boxwork unit, intersecting networks of mineralized bedrock ridges <b>(1.2–1.8 m high, ~5 m wide)</b> surround sunken polygonal hollows filled with loose, high-slip aeolian sand.</p>
+        </section>
+
+        <section class="brief-section">
+          <div class="brief-section-head"><span>02</span><h2>HOW ARES-WALK SOLVES THE TRAVERSE</h2></div>
+          <div class="brief-features">
+            <article class="brief-feature">
+              <span class="feature-index">A</span>
+              <svg><use href="#i-layers"/></svg>
+              <h3>Multi-Sensor Fusion</h3>
+              <p>Co-registers <b>1 m/px HiRISE stereo topography</b>, <b>THEMIS nighttime thermal inertia</b>, and <b>CRISM hyperspectral mineralogy</b> onto a unified local Martian grid.</p>
+            </article>
+            <article class="brief-feature">
+              <span class="feature-index">B</span>
+              <svg><use href="#i-bootprint"/></svg>
+              <h3>Suit-Calibrated Routing</h3>
+              <p>Replaces shortest-distance paths with an asymmetric <b>0.38g suited metabolic cost surface</b>—preferring firm bedrock ridge crests over energy-draining sand traps.</p>
+            </article>
+            <article class="brief-feature">
+              <span class="feature-index">C</span>
+              <svg><use href="#i-alert"/></svg>
+              <h3>Hard Flight-Rule Safety</h3>
+              <p>Enforces a mandatory <b>25% PLSS walkback reserve</b> at every single metre of the traverse, maps UHF line-of-sight dead zones, and supports instant <b>Solar Particle Event (SPE)</b> minimum-time abort re-routing.</p>
+            </article>
+          </div>
+        </section>
+
+        <div class="brief-readout">
+          <div><span>ROUTE</span><strong>MIN-METABOLIC</strong></div>
+          <div><span>WALKBACK CAP</span><strong>1,200 Wh</strong></div>
+          <div><span>STABILITY LIMIT</span><strong>22°</strong></div>
+          <div><span>GRAVITY</span><strong>0.38 g</strong></div>
+        </div>
+      </div>
+
+      <div class="brief-foot">
+        <span><i></i> FUSION: HiRISE · THEMIS · CRISM · MSL CURIOSITY</span>
+        <button type="button" class="primary-btn" id="briefEnter">ENTER TRAVERSE <svg><use href="#i-arrow"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><span></span></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/terrain.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
